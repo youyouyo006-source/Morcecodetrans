@@ -1,20 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>M Code Website</title>
-    <style>
-        body {
-            background-color: black; /* or whatever color you want */
-            color: white; /* text color */
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-    </style>
-</head>
 <body>
-    <h1>Welcome to M Code Website!</h1>
-    <p>This is your first GitHub Pages site.</p>
+  <!-- Your existing sections like header, about, etc. -->
+
+  <section>
+    <h2>M Code Encoder</h2>
+    <p>Type your message below to convert it into M Code:</p>
+    <input type="text" id="textInput" placeholder="Enter message">
+    <button onclick="encodeMCode()">Encode</button>
+    <p>Result:</p>
+    <p id="result"></p>
+  </section>
+
+  <script>
+    const mCodeMap = {
+      'A': '.-', 'B': '-...', 'C': '-.-.',
+      'D': '-..', 'E': '.', 'F': '..-.',
+      'G': '--.', 'H': '....', 'I': '..',
+      'J': '.---', 'K': '-.-', 'L': '.-..',
+      'M': '--', 'N': '-.', 'O': '---',
+      'P': '.--.', 'Q': '--.-', 'R': '.-.',
+      'S': '...', 'T': '-', 'U': '..-',
+      'V': '...-', 'W': '.--', 'X': '-..-',
+      'Y': '-.--', 'Z': '--..',
+      ' ': '/'  // space between words
+    };
+
+    function encodeMCode() {
+      const input = document.getElementById('textInput').value.toUpperCase();
+      let result = '';
+      for (let char of input) {
+        result += mCodeMap[char] ? mCodeMap[char] + ' ' : '';
+      }
+      document.getElementById('result').innerText = result.trim();
+    }
+  </script>
 </body>
-</html>
