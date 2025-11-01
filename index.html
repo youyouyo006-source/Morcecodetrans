@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>M Code Website</title>
 <style>
-  /* Full-screen canvas */
   body, html {
     margin: 0;
     padding: 0;
@@ -19,10 +18,9 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: -1; /* behind content */
+    z-index: -1;
   }
 
-  /* Content style */
   .content {
     position: relative;
     z-index: 1;
@@ -34,7 +32,7 @@
 
   input, button {
     padding: 10px;
-    margin: 10px 0;
+    margin: 10px 5px;
     border-radius: 10px;
     border: none;
     outline: none;
@@ -43,7 +41,7 @@
   }
 
   input {
-    width: 80%;
+    width: 70%;
     background: rgba(0,0,0,0.8);
     color: #00FF00;
   }
@@ -57,24 +55,14 @@
     box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 40px #00FF00;
   }
 
-  /* Button animation on click */
   button:active {
     animation: pulse 0.3s ease-in-out;
   }
 
   @keyframes pulse {
-    0% {
-      box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 40px #00FF00;
-      transform: scale(1);
-    }
-    50% {
-      box-shadow: 0 0 20px #00FF00, 0 0 40px #00FF00, 0 0 80px #00FF00;
-      transform: scale(1.1);
-    }
-    100% {
-      box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 40px #00FF00;
-      transform: scale(1);
-    }
+    0% { box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 40px #00FF00; transform: scale(1);}
+    50% { box-shadow: 0 0 20px #00FF00, 0 0 40px #00FF00, 0 0 80px #00FF00; transform: scale(1.1);}
+    100% { box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 40px #00FF00; transform: scale(1);}
   }
 
   #translatorResult {
@@ -95,12 +83,14 @@
     <label>Text → M Code</label><br>
     <input type="text" id="textInput" placeholder="Enter text">
     <button onclick="textToMCode()">Encode</button>
+    <button onclick="clearTextInput()">Clear</button>
   </div>
 
   <div>
     <label>M Code → Text</label><br>
     <input type="text" id="mcodeInput" placeholder="Enter M Code">
     <button onclick="mCodeToText()">Decode</button>
+    <button onclick="clearMCodeInput()">Clear</button>
   </div>
 
   <p>Result:</p>
@@ -131,9 +121,7 @@
       const text = letters[Math.floor(Math.random() * letters.length)];
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-      if (drops[i] * fontSize > canvas.height || Math.random() > 0.975) {
-        drops[i] = 0;
-      }
+      if (drops[i] * fontSize > canvas.height || Math.random() > 0.975) drops[i] = 0;
 
       drops[i]++;
     }
@@ -171,6 +159,17 @@
     let result = '';
     for (let code of codes) result += reverseMCodeMap[code] ? reverseMCodeMap[code] : '';
     document.getElementById('translatorResult').innerText = result;
+  }
+
+  // CLEAR BUTTON FUNCTIONS
+  function clearTextInput() {
+    document.getElementById('textInput').value = '';
+    document.getElementById('translatorResult').innerText = '';
+  }
+
+  function clearMCodeInput() {
+    document.getElementById('mcodeInput').value = '';
+    document.getElementById('translatorResult').innerText = '';
   }
 
   window.addEventListener('resize', () => {
