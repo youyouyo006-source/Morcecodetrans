@@ -1,16 +1,19 @@
-<body>
-  <!-- Your existing sections like header, about, etc. -->
-
-  <section>
-    <h2>M Code Encoder</h2>
-    <p>Type your message below to convert it into M Code:</p>
-    <input type="text" id="textInput" placeholder="Enter message">
-    <button onclick="encodeMCode()">Encode</button>
-    <p>Result:</p>
-    <p id="result"></p>
-  </section>
+<section>
+  <h2>M Code Translator</h2>
+  
+  <p>Type your message below to convert to M Code:</p>
+  <input type="text" id="textInput" placeholder="Enter text">
+  <button onclick="textToMCode()">Text → M Code</button>
+  
+  <p>Type M Code below to convert to letters (use spaces between codes, / for space):</p>
+  <input type="text" id="mcodeInput" placeholder="Enter M Code">
+  <button onclick="mCodeToText()">M Code → Text</button>
+  
+  <p>Result:</p>
+  <p id="translatorResult"></p>
 
   <script>
+    // M Code mapping (example)
     const mCodeMap = {
       'A': '.-', 'B': '-...', 'C': '-.-.',
       'D': '-..', 'E': '.', 'F': '..-.',
@@ -24,13 +27,29 @@
       ' ': '/'  // space between words
     };
 
-    function encodeMCode() {
+    // Create reverse mapping for M Code → letters
+    const reverseMCodeMap = {};
+    for (let key in mCodeMap) {
+      reverseMCodeMap[mCodeMap[key]] = key;
+    }
+
+    function textToMCode() {
       const input = document.getElementById('textInput').value.toUpperCase();
       let result = '';
       for (let char of input) {
         result += mCodeMap[char] ? mCodeMap[char] + ' ' : '';
       }
-      document.getElementById('result').innerText = result.trim();
+      document.getElementById('translatorResult').innerText = result.trim();
+    }
+
+    function mCodeToText() {
+      const input = document.getElementById('mcodeInput').value.trim();
+      const codes = input.split(' '); // split by spaces
+      let result = '';
+      for (let code of codes) {
+        result += reverseMCodeMap[code] ? reverseMCodeMap[code] : '';
+      }
+      document.getElementById('translatorResult').innerText = result;
     }
   </script>
-</body>
+</section>
