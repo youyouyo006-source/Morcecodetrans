@@ -1,55 +1,183 @@
-<section>
-  <h2>M Code Translator</h2>
-  
-  <p>Type your message below to convert to M Code:</p>
-  <input type="text" id="textInput" placeholder="Enter text">
-  <button onclick="textToMCode()">Text → M Code</button>
-  
-  <p>Type M Code below to convert to letters (use spaces between codes, / for space):</p>
-  <input type="text" id="mcodeInput" placeholder="Enter M Code">
-  <button onclick="mCodeToText()">M Code → Text</button>
-  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M Code Website</title>
+<style>
+  /* Full-screen canvas */
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: black;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+  }
+
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1; /* behind content */
+  }
+
+  /* Content style */
+  .content {
+    position: relative;
+    z-index: 1;
+    color: #00FF00;
+    text-align: center;
+    padding-top: 50px;
+    text-shadow: 0 0 10px #00FF00;
+  }
+
+  input, button {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-family: monospace;
+    font-size: 1em;
+  }
+
+  input {
+    width: 80%;
+    background: rgba(0,0,0,0.8);
+    color: #00FF00;
+  }
+
+  button {
+    background: #00FF00;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 40px #00FF00;
+  }
+
+  /* Button animation on click */
+  button:active {
+    animation: pulse 0.3s ease-in-out;
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 40px #00FF00;
+      transform: scale(1);
+    }
+    50% {
+      box-shadow: 0 0 20px #00FF00, 0 0 40px #00FF00, 0 0 80px #00FF00;
+      transform: scale(1.1);
+    }
+    100% {
+      box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 40px #00FF00;
+      transform: scale(1);
+    }
+  }
+
+  #translatorResult {
+    margin-top: 20px;
+    font-size: 1.2em;
+    text-shadow: 0 0 10px #00FF00;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div class="content">
+  <h1>M Code Translator</h1>
+
+  <div>
+    <label>Text → M Code</label><br>
+    <input type="text" id="textInput" placeholder="Enter text">
+    <button onclick="textToMCode()">Encode</button>
+  </div>
+
+  <div>
+    <label>M Code → Text</label><br>
+    <input type="text" id="mcodeInput" placeholder="Enter M Code">
+    <button onclick="mCodeToText()">Decode</button>
+  </div>
+
   <p>Result:</p>
   <p id="translatorResult"></p>
+</div>
 
-  <script>
-    // M Code mapping (example)
-    const mCodeMap = {
-      'A': '.-', 'B': '-...', 'C': '-.-.',
-      'D': '-..', 'E': '.', 'F': '..-.',
-      'G': '--.', 'H': '....', 'I': '..',
-      'J': '.---', 'K': '-.-', 'L': '.-..',
-      'M': '--', 'N': '-.', 'O': '---',
-      'P': '.--.', 'Q': '--.-', 'R': '.-.',
-      'S': '...', 'T': '-', 'U': '..-',
-      'V': '...-', 'W': '.--', 'X': '-..-',
-      'Y': '-.--', 'Z': '--..',
-      ' ': '/'  // space between words
-    };
+<script>
+  // MATRIX BACKGROUND
+  const canvas = document.getElementById('matrixCanvas');
+  const ctx = canvas.getContext('2d');
 
-    // Create reverse mapping for M Code → letters
-    const reverseMCodeMap = {};
-    for (let key in mCodeMap) {
-      reverseMCodeMap[mCodeMap[key]] = key;
-    }
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-    function textToMCode() {
-      const input = document.getElementById('textInput').value.toUpperCase();
-      let result = '';
-      for (let char of input) {
-        result += mCodeMap[char] ? mCodeMap[char] + ' ' : '';
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
+  const fontSize = 20;
+  const columns = canvas.width / fontSize;
+  const drops = Array(Math.floor(columns)).fill(0);
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#00FF00';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = letters[Math.floor(Math.random() * letters.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height || Math.random() > 0.975) {
+        drops[i] = 0;
       }
-      document.getElementById('translatorResult').innerText = result.trim();
-    }
 
-    function mCodeToText() {
-      const input = document.getElementById('mcodeInput').value.trim();
-      const codes = input.split(' '); // split by spaces
-      let result = '';
-      for (let code of codes) {
-        result += reverseMCodeMap[code] ? reverseMCodeMap[code] : '';
-      }
-      document.getElementById('translatorResult').innerText = result;
+      drops[i]++;
     }
-  </script>
-</section>
+  }
+
+  setInterval(drawMatrix, 50);
+
+  // M CODE SCRIPT
+  const mCodeMap = {
+    'A': '.-', 'B': '-...', 'C': '-.-.',
+    'D': '-..', 'E': '.', 'F': '..-.',
+    'G': '--.', 'H': '....', 'I': '..',
+    'J': '.---', 'K': '-.-', 'L': '.-..',
+    'M': '--', 'N': '-.', 'O': '---',
+    'P': '.--.', 'Q': '--.-', 'R': '.-.',
+    'S': '...', 'T': '-', 'U': '..-',
+    'V': '...-', 'W': '.--', 'X': '-..-',
+    'Y': '-.--', 'Z': '--..',
+    ' ': '/'  // space
+  };
+
+  const reverseMCodeMap = {};
+  for (let key in mCodeMap) { reverseMCodeMap[mCodeMap[key]] = key; }
+
+  function textToMCode() {
+    const input = document.getElementById('textInput').value.toUpperCase();
+    let result = '';
+    for (let char of input) result += mCodeMap[char] ? mCodeMap[char] + ' ' : '';
+    document.getElementById('translatorResult').innerText = result.trim();
+  }
+
+  function mCodeToText() {
+    const input = document.getElementById('mcodeInput').value.trim();
+    const codes = input.split(' ');
+    let result = '';
+    for (let code of codes) result += reverseMCodeMap[code] ? reverseMCodeMap[code] : '';
+    document.getElementById('translatorResult').innerText = result;
+  }
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+</script>
+
+</body>
+</html>
